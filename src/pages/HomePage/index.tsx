@@ -3,40 +3,53 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import Image from "next/image";
 
 import Error from "~/components/Error";
 import Loading from "~/components/Loading";
 import { MediaType, TimeWindowType, TMDBResponse } from "~/lib/types";
+import MovieCardList from "~/components/MovieCardList";
+import GradientButton from "~/components/GradientButton";
 
 const fetchTrending = async (
     mediaType: string,
-    timeWindow: string
+    timeWindow: string,
+    page: Number
 ): Promise<TMDBResponse> => {
     const { data } = await axios.get<TMDBResponse>(
-        `/api/trending?mediaType=${mediaType}&timeWindow=${timeWindow}`
+        `/api/trending?mediaType=${mediaType}&timeWindow=${timeWindow}&page=${page}`
     );
     return data;
 };
 
-const IMAGE_LINK = process.env.NEXT_PUBLIC_TMDB_IMAGE_LINK;
-
 const HomePage = () => {
-    const [mediaType, setMediaType] = useState<MediaType>("all");
+    const [mediaType, setMediaType] = useState<MediaType>("movie");
     const [timeWindow, setTimeWindow] = useState<TimeWindowType>("day");
+    const [page, setPage] = useState(1);
 
     const { data, error, isPending } = useQuery<TMDBResponse>({
-        queryKey: ["trending"],
-        queryFn: () => fetchTrending(mediaType, timeWindow),
+        queryKey: ["trending", mediaType, timeWindow, page],
+        queryFn: () => fetchTrending(mediaType, timeWindow, page),
     });
 
-    if (isPending) return <Loading />;
-    if (error) return <Error />;
+    const mediaLabel =
+        mediaType === "all"
+            ? "media"
+            : mediaType === "movie"
+            ? "movies"
+            : "TV shows";
 
-    const movieList = data?.results ?? [];
-    console.log(movieList);
+    const handleMediaTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setMediaType(e.target.value as MediaType);
+    };
+
+    const handleTimeWindowChange = (
+        e: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+        setTimeWindow(e.target.value as TimeWindowType);
+    };
+
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
             <div className="flex flex-col p-10 text-center">
                 <h1 className="bg-gradient-to-r from-blue-500 to-indigo-500 inline-block text-transparent bg-clip-text font-black text-4xl md:text-6xl italic">
                     G Movie Hub
@@ -45,41 +58,52 @@ const HomePage = () => {
                     Discover and stream your favorite content!
                 </span>
             </div>
-
-            <div className="flex flex-wrap gap-4 px-4 md:px-16">
-                {movieList?.map((movie) => {
-                    const title =
-                        movie?.media_type === "tv" ? movie?.name : movie?.title;
-
-                    const movieEmoji = movie?.media_type === "tv" ? "📺" : "🎥";
-                    return (
-                        <div
-                            key={movie.id}
-                            className="group border border-gray-200 rounded-3xl max-w-52 p-4 relative overflow-hidden w-52 h-72 hover:scale-110 duration-200"
-                        >
-                            <Image
-                                alt={title}
-                                fill
-                                className="object-cover duration-1000 hover:scale-110"
-                                src={`${IMAGE_LINK}${movie?.poster_path}`}
-                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Add proper size handling for responsive design
-                            />
-                            <div className="movie-details absolute bottom-0 left-0 w-full bg-black/80 text-white p-3 h-auto transition-transform duration-500 transform translate-y-full group-hover:translate-y-0">
-                                <h3 className="text-base font-bold">{title}</h3>
-                                <span className="capitalize text-xs text-gray-300">
-                                    {movieEmoji}
-                                    {movie?.media_type}
-                                </span>
-                                <p className="text-xs text-gray-300">
-                                    📅 {movie.release_date}
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                    ⭐ {movie.vote_average}/10
-                                </p>
-                            </div>
-                        </div>
-                    );
-                })}
+            <div className="px-4 md:px-16 max-w-screen-2xl w-full">
+                <h1 className="font-semibold text-2xl md:text-4xl pb-4">
+                    Trending {mediaLabel}{" "}
+                    {timeWindow === "day" ? "today" : "this week"}
+                </h1>
+                <div className="flex gap-4 pb-4">
+                    <select
+                        value={mediaType}
+                        onChange={handleMediaTypeChange}
+                        className="text-sm rounded-lg block w-fit p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All</option>
+                        <option value="movie">Movies</option>
+                        <option value="tv">TV Shows</option>
+                    </select>
+                    <select
+                        value={timeWindow}
+                        onChange={handleTimeWindowChange}
+                        className="text-sm rounded-lg block w-fit p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="day">Day</option>
+                        <option value="week">Week</option>
+                    </select>
+                </div>
+                <MovieCardList
+                    movieList={data?.results}
+                    isLoading={isPending}
+                    isError={!!error}
+                />
+                <div className="p-4 flex justify-center gap-4">
+                    <GradientButton
+                        disabled={page == 1}
+                        handleClick={() => setPage((cur) => cur - 1)}
+                    >
+                        Previous
+                    </GradientButton>
+                    <GradientButton
+                        disabled={
+                            data?.total_pages !== undefined &&
+                            page === data.total_pages - 1
+                        }
+                        handleClick={() => setPage((cur) => cur + 1)}
+                    >
+                        Next
+                    </GradientButton>
+                </div>
             </div>
         </div>
     );

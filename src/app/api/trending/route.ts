@@ -16,10 +16,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const mediaType = searchParams.get("mediaType") || "all";
     const timeWindow = searchParams.get("timeWindow") || "day";
+    const page = searchParams.get("page") || 1;
 
     try {
         const { data } = await axios.get<TMDBResponse>(
-            `${TMDB_LINK}/trending/${mediaType}/${timeWindow}?language=en-US`,
+            `${TMDB_LINK}/trending/${mediaType}/${timeWindow}?page=${page}&language=en-US`,
             {
                 params: { api_key: TMDB_API_KEY },
             }
