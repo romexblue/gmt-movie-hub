@@ -25,9 +25,13 @@ const MovieCard = ({ movie }: { movie: TMDBMovie }) => {
                     {movieEmoji}
                     {movie?.media_type}
                 </span>
-                <p className="text-xs text-gray-300">📅 {movie.release_date}</p>
+                {movie?.release_date && (
+                    <p className="text-xs text-gray-300">
+                        📅 {movie.release_date}
+                    </p>
+                )}
                 <p className="text-xs text-gray-400">
-                    ⭐ {movie.vote_average}/10
+                    ⭐ {movie?.vote_average}/10
                 </p>
             </div>
         </div>
