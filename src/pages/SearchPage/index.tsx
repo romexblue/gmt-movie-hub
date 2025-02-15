@@ -1,46 +1,76 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+import SearchBar from "~/components/SearchBar";
+import SearchCardList from "~/components/SearchCardList";
+import { TMDBResponse } from "~/lib/types";
+import GradientButton from "~/components/GradientButton";
+
+const fetchSearch = async (
+    page: number,
+    searchString: string
+): Promise<TMDBResponse> => {
+    const { data } = await axios.get<TMDBResponse>(
+        `/api/search?query=${searchString}&page=${page}`
+    );
+    return data;
+};
 
 type Props = {
-  searchString: string;
+    searchString: string;
 };
 
 const SearchPage = ({ searchString }: Props) => {
-  return (
-    <div className="">
-      <div className="w-full flex justify-center bg-gray-800 p-4">
-        <div className="flex justify-center items-center w-full max-w-screen-2x gap-8">
-          <Link
-            href="/"
-            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-transparent bg-clip-text font-black text-4xl md:text-6xl italic"
-          >
-            G
-          </Link>
-          <div className="flex">
-            <div className="flex w-10 items-center justify-center rounded-tl-3xl rounded-bl-3xl border-r border-gray-200 bg-white p-5">
-              <svg
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-                className="pointer-events-none absolute w-5 fill-gray-500 transition"
-              >
-                <path d="M16.72 17.78a.75.75 0 1 0 1.06-1.06l-1.06 1.06ZM9 14.5A5.5 5.5 0 0 1 3.5 9H2a7 7 0 0 0 7 7v-1.5ZM3.5 9A5.5 5.5 0 0 1 9 3.5V2a7 7 0 0 0-7 7h1.5ZM9 3.5A5.5 5.5 0 0 1 14.5 9H16a7 7 0 0 0-7-7v1.5Zm3.89 10.45 3.83 3.83 1.06-1.06-3.83-3.83-1.06 1.06ZM14.5 9a5.48 5.48 0 0 1-1.61 3.89l1.06 1.06A6.98 6.98 0 0 0 16 9h-1.5Zm-1.61 3.89A5.48 5.48 0 0 1 9 14.5V16a6.98 6.98 0 0 0 4.95-2.05l-1.06-1.06Z"></path>
-              </svg>
+    const [page, setPage] = useState(1);
+
+    const { data, error, isPending } = useQuery<TMDBResponse>({
+        queryKey: ["search", searchString, page],
+        queryFn: () => fetchSearch(page, searchString),
+    });
+
+    return (
+        <div>
+            <div className="w-full flex justify-center bg-gray-800 p-4">
+                <div className="flex justify-center items-center w-full max-w-screen-2xl gap-8">
+                    <Link
+                        href="/"
+                        className="bg-gradient-to-r from-blue-500 to-indigo-500 text-transparent bg-clip-text font-black text-4xl md:text-6xl italic"
+                    >
+                        G
+                    </Link>
+                    <SearchBar containerClass="" />
+                </div>
             </div>
-            <input
-              type="text"
-              className="w-full max-w-80 bg-white pl-2 text-black font-semibold outline-0"
-              placeholder=""
-              id=""
+
+            <SearchCardList
+                movieList={data?.results}
+                isError={!!error}
+                isLoading={isPending}
             />
-            <button className="bg-blue-500 p-2 rounded-tr-3xl rounded-br-3xl text-white font-semibold hover:bg-blue-800 transition-colors">
-              Search
-            </button>
-          </div>
+
+            <div className="p-8 flex justify-center gap-4 mt-4">
+                <GradientButton
+                    disabled={page === 1}
+                    handleClick={() => setPage((cur) => cur - 1)}
+                >
+                    Previous
+                </GradientButton>
+                <GradientButton
+                    disabled={
+                        data?.total_pages !== undefined &&
+                        page >= data.total_pages
+                    }
+                    handleClick={() => setPage((cur) => cur + 1)}
+                >
+                    Next
+                </GradientButton>
+            </div>
         </div>
-      </div>
-      <div className="h-[2000px] border-2 border-blue-300 ">Hallo Bro</div>
-    </div>
-  );
+    );
 };
 
 export default SearchPage;
