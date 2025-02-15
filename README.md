@@ -7,8 +7,6 @@ This project is an **IMDB-style movie search app** built using **Next.js**. It a
 - Click on a movie or TV show to view detailed information on a separate page.
 - Enjoy a responsive, performant, and user-friendly experience.
 
-![Movie Poster](https://image.tmdb.org/t/p/w500/your-image-path.jpg)
-
 ## **Tech Stack**
 - **Frontend & Backend**: Next.js (React + Node.js API routes)
 - **Styling**: Tailwind CSS
