@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+
 import { TMDBMovie } from "~/lib/types";
 import { getMovieEmoji, getMovieTitle } from "~/lib/utils";
 
@@ -10,8 +12,8 @@ const MovieCard = ({ movie }: { movie: TMDBMovie }) => {
     const movieEmoji = getMovieEmoji(movie);
 
     return (
-        <div
-            key={movie.id}
+        <Link
+            href={`/${movie?.media_type}/${movie?.id}`}
             className="group border border-gray-200 rounded-3xl max-w-60 p-4 relative overflow-hidden w-60 h-96 hover:scale-110 duration-200"
         >
             {movie?.poster_path ? (
@@ -42,7 +44,7 @@ const MovieCard = ({ movie }: { movie: TMDBMovie }) => {
                     ⭐ {movie?.vote_average}/10
                 </p>
             </div>
-        </div>
+        </Link>
     );
 };
 

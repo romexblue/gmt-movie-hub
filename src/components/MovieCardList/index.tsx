@@ -18,7 +18,7 @@ const MovieCardList = ({ movieList, isLoading, isError }: Props) => {
             </div>
         );
     if (isError) return <Error />;
-
+    
     return (
         <div className="flex flex-wrap justify-center gap-6 bg-gray-800 rounded-xl p-4">
             {movieList?.map((movie) => (

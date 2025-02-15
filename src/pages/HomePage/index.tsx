@@ -13,7 +13,7 @@ import SearchBar from "~/components/SearchBar";
 const fetchTrending = async (
     mediaType: string,
     timeWindow: string,
-    page: Number
+    page: number
 ): Promise<TMDBResponse> => {
     const { data } = await axios.get<TMDBResponse>(
         `/api/trending?mediaType=${mediaType}&timeWindow=${timeWindow}&page=${page}`

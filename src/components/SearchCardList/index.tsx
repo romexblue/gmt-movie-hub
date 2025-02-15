@@ -20,6 +20,17 @@ const SearchCardList = ({ movieList = [], isLoading, isError }: Props) => {
         );
     if (isError) return <Error />;
 
+    if (movieList?.length === 0)
+        return (
+            <div className="flex flex-col items-center justify-center text-center py-10">
+                <span className="text-6xl">🔍</span>
+                <p className="text-lg text-gray-400 mt-2">
+                    Sorry, no movies matched your search. Please try another
+                    keywords
+                </p>
+            </div>
+        );
+
     const isTwoColumnLayout = movieList?.length > 3;
 
     return (

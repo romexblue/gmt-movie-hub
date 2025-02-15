@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { TMDBMovie } from "~/lib/types";
 import { getMovieEmoji, getMovieTitle } from "~/lib/utils";
@@ -15,9 +16,9 @@ const SearchCard = ({ movie, isTwoColumnLayout }: Props) => {
     const title = getMovieTitle(movie);
     const movieEmoji = getMovieEmoji(movie);
     return (
-        <div
-            key={movie?.id}
-            className={`flex gap-4 items-center ${
+        <Link
+            href={`/${movie?.media_type}/${movie?.id}`}
+            className={`flex gap-4 items-center hover:ring-2 duration-500 hover:shadow-lg hover:shadow-violet-600 rounded-xl ${
                 isTwoColumnLayout ? "max-w-[31.25rem]" : "w-full"
             }`}
         >
@@ -48,7 +49,7 @@ const SearchCard = ({ movie, isTwoColumnLayout }: Props) => {
                 <p className="text-gray-400">⭐ {movie?.vote_average}/10</p>
                 <p className="text-gray-400 line-clamp-2">{movie?.overview}</p>
             </div>
-        </div>
+        </Link>
     );
 };
 
