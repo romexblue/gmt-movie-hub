@@ -32,12 +32,12 @@ const MediaPage = ({ movieId, mediaType }: Props) => {
         queryKey: ["media", mediaType, movieId],
         queryFn: () => queryFn(movieId),
     });
-    
+
     if (isPending) return <Loading />;
     if (error) return <Error />;
 
     return (
-        <div className="w-full flex justify-center pt-10">
+        <div className="w-full flex justify-center py-10">
             <div className="w-full px-4 md:px-16 max-w-screen-2xl">
                 {mediaType === "movie" ? (
                     <MovieCardById movie={data as TMDBMovieById} />
