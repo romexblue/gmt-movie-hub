@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "GMT Movie Hub",
+    title: "G Movie Hub",
     description:
         "Explore and search for movies and TV shows with detailed information, ratings, and more, powered by TMDB",
 };
