@@ -23,7 +23,7 @@ const fetchTrending = async (
 
 const HomePage = () => {
     const [mediaType, setMediaType] = useState<MediaType>("movie");
-    const [timeWindow, setTimeWindow] = useState<TimeWindowType>("day");
+    const [timeWindow, setTimeWindow] = useState<TimeWindowType>("week");
     const [page, setPage] = useState(1);
 
     const { data, error, isPending } = useQuery<TMDBResponse>({
@@ -95,7 +95,7 @@ const HomePage = () => {
                     <GradientButton
                         disabled={
                             data?.total_pages !== undefined &&
-                            page === data.total_pages - 1
+                            page >= data.total_pages
                         }
                         handleClick={() => setPage((cur) => cur + 1)}
                     >
