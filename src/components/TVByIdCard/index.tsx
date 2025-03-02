@@ -197,16 +197,24 @@ const TVByIdCard = ({ tvShow }: Props) => {
             </div>
             <div className="flex flex-col gap-2 bg-gray-900 p-10 rounded-3xl w-fit">
                 {isWatching ? (
-                    <iframe
-                        className="w-full h-[38.9rem] rounded-xl aspect-video"
-                        src={getVideoUrl(
-                            selectedSource,
-                            tvShow.id,
-                            selectedSeasonObj?.season_number || 1,
-                            selectedEpisode
-                        )}
-                        allowFullScreen
-                    />
+                    <>
+                        <iframe
+                            className="w-full h-[38.9rem] rounded-xl aspect-video"
+                            src={getVideoUrl(
+                                selectedSource,
+                                tvShow.id,
+                                selectedSeasonObj?.season_number || 1,
+                                selectedEpisode
+                            )}
+                            allowFullScreen
+                        />
+                        <p>
+                            Ads may appear due to the media player. These are
+                            served by the video provider and are not controlled
+                            by our site.{" "}
+                            <small>I recommend using brave browser</small>
+                        </p>
+                    </>
                 ) : (
                     <>
                         <h1 className="text-3xl font-bold">{tvShow?.name}</h1>

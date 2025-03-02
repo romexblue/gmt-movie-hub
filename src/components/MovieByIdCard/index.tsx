@@ -103,11 +103,19 @@ const MovieCardById = ({ movie }: Props) => {
             </div>
             <div className="flex flex-col gap-2 bg-gray-900 p-4 rounded-3xl w-fit">
                 {isWatching ? (
-                    <iframe
-                        className="w-full h-[38.9rem] rounded-xl aspect-video"
-                        src={`${selectedSource}${movie?.id}`}
-                        allowFullScreen
-                    />
+                    <>
+                        <iframe
+                            className="w-full h-[38.9rem] rounded-xl aspect-video"
+                            src={`${selectedSource}${movie?.id}`}
+                            allowFullScreen
+                        />
+                        <p>
+                            Ads may appear due to the media player. These are
+                            served by the video provider and are not controlled
+                            by our site.{" "}
+                            <small>I recommend using brave browser</small>
+                        </p>
+                    </>
                 ) : (
                     <>
                         <h1 className="text-3xl font-bold">{movie?.title}</h1>
