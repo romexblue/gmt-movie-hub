@@ -3,17 +3,50 @@ import Image from "next/image";
 import { TMDBMovieById } from "~/lib/types";
 import CastAvatar from "~/components/CastAvatar";
 import { getDirectors } from "~/lib/utils";
+import Select from "../Select";
 
 const IMAGE_LINK = process.env.NEXT_PUBLIC_TMDB_IMAGE_LINK;
 const videoSources = [
-    { id: 1, name: "Server 1", url: process.env.NEXT_PUBLIC_SERVER_1 },
-    { id: 2, name: "Server 2", url: process.env.NEXT_PUBLIC_SERVER_2 },
-    { id: 3, name: "Server 3", url: process.env.NEXT_PUBLIC_SERVER_3 },
-    { id: 4, name: "Server 4", url: process.env.NEXT_PUBLIC_SERVER_4 },
-    { id: 5, name: "Server 5", url: process.env.NEXT_PUBLIC_SERVER_5 },
-    { id: 6, name: "Server 6", url: process.env.NEXT_PUBLIC_SERVER_6 },
-    { id: 7, name: "Server 7", url: process.env.NEXT_PUBLIC_SERVER_7 },
-    { id: 8, name: "Server 8", url: process.env.NEXT_PUBLIC_SERVER_8 },
+    {
+        id: 1,
+        name: "Server 1",
+        url: `${process.env.NEXT_PUBLIC_SERVER_1}movie/`,
+    },
+    {
+        id: 2,
+        name: "Server 2",
+        url: `${process.env.NEXT_PUBLIC_SERVER_2}movie/`,
+    },
+    {
+        id: 3,
+        name: "Server 3",
+        url: `${process.env.NEXT_PUBLIC_SERVER_3}movie/`,
+    },
+    {
+        id: 4,
+        name: "Server 4",
+        url: `${process.env.NEXT_PUBLIC_SERVER_4}movie/`,
+    },
+    {
+        id: 5,
+        name: "Server 5",
+        url: `${process.env.NEXT_PUBLIC_SERVER_5}movie/`,
+    },
+    {
+        id: 6,
+        name: "Server 6",
+        url: `${process.env.NEXT_PUBLIC_SERVER_6}movie/`,
+    },
+    {
+        id: 7,
+        name: "Server 7",
+        url: `${process.env.NEXT_PUBLIC_SERVER_7}movie/`,
+    },
+    {
+        id: 8,
+        name: "Server 8",
+        url: `${process.env.NEXT_PUBLIC_SERVER_8}movie/`,
+    },
 ];
 
 type Props = {
@@ -23,7 +56,9 @@ type Props = {
 const MovieCardById = ({ movie }: Props) => {
     const directors = getDirectors(movie?.credits?.crew);
     const [isWatching, setIsWatching] = useState(false);
-    const [selectedSource, setSelectedSource] = useState(videoSources?.[0].url);
+    const [selectedSource, setSelectedSource] = useState(
+        videoSources?.[0].url || ""
+    );
 
     return (
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 bg-gray-800 rounded-xl p-4">
@@ -55,16 +90,14 @@ const MovieCardById = ({ movie }: Props) => {
                         Click Here To Watch
                     </button>
                     {isWatching && (
-                        <select
+                        <Select
+                            value={selectedSource}
                             onChange={(e) => setSelectedSource(e.target.value)}
-                            className="border p-2 rounded text-black"
-                        >
-                            {videoSources.map((source) => (
-                                <option key={source.id} value={source.url}>
-                                    {source.name}
-                                </option>
-                            ))}
-                        </select>
+                            options={videoSources.map((source) => ({
+                                label: source.name,
+                                value: source.url || "",
+                            }))}
+                        />
                     )}
                 </div>
             </div>

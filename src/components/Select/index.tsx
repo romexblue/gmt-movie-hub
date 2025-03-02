@@ -1,9 +1,9 @@
 import React from "react";
 
 type SelectProps<T> = {
-  value: T;
+  value: T | number;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: { label: string; value: T }[];
+  options: { label: string; value: T | number }[];
 }
 
 const Select = <T extends string>({ value, onChange, options }: SelectProps<T>) => {
