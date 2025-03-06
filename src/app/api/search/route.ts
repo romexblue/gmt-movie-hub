@@ -32,7 +32,11 @@ export async function GET(request: NextRequest) {
             },
         });
 
-        return Response.json(data);
+        const filteredResults = data.results.filter(
+            (item: { media_type: string }) => item.media_type === "movie" || item.media_type === "tv"
+        );
+
+         return Response.json({ ...data, results: filteredResults });
     } catch (error) {
         return Response.json(
             { error: error instanceof Error ? error.message : "Unknown error" },
