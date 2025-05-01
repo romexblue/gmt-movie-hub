@@ -169,7 +169,7 @@ const MovieCardById = ({ movie }: Props) => {
                         <div className="flex flex-col lg:flex-row justify-between">
                             <span>
                                 <span className="font-bold text-lg">
-                                    ⭐ {movie?.vote_average}
+                                    ⭐ {movie?.vote_average?.toFixed(2)}
                                 </span>
                                 &nbsp;/10
                             </span>

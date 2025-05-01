@@ -41,7 +41,7 @@ const MovieCard = ({ movie }: { movie: TMDBMovie }) => {
                     </p>
                 )}
                 <p className="text-xs text-gray-400">
-                    ⭐ {movie?.vote_average}/10
+                    ⭐ {movie?.vote_average?.toFixed(2)}/10
                 </p>
             </div>
         </Link>

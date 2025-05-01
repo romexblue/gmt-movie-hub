@@ -46,7 +46,7 @@ const SearchCard = ({ movie, isTwoColumnLayout }: Props) => {
                 {movie?.release_date && (
                     <p className="text-gray-300">📅 {movie.release_date}</p>
                 )}
-                <p className="text-gray-400">⭐ {movie?.vote_average}/10</p>
+                <p className="text-gray-400">⭐ {movie?.vote_average?.toFixed(2)}/10</p>
                 <p className="text-gray-400 line-clamp-2">{movie?.overview}</p>
             </div>
         </Link>
