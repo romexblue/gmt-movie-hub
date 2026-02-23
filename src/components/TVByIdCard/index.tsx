@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { TMDBTVbyId } from "~/lib/types";
 import CastAvatar from "~/components/CastAvatar";
 import { getDirectors } from "~/lib/utils";
 import Select from "../Select";
+import {
+    WatchProgress,
+    getWatchProgress,
+    setWatchProgress,
+    clearWatchProgress,
+} from "~/lib/watchProgress";
 
 const IMAGE_LINK = process.env.NEXT_PUBLIC_TMDB_IMAGE_LINK;
 const videoSources = new Map<
@@ -102,9 +108,46 @@ const TVByIdCard = ({ tvShow }: Props) => {
         tvShow?.seasons ? 1 : 1
     );
 
+    const [savedProgress, setSavedProgress] = useState<WatchProgress | null>(
+        null
+    );
+
     const selectedSeasonObj = tvShow?.seasons?.find(
         (season) => season.name === selectedSeason
     );
+
+    // Load saved progress on mount
+    useEffect(() => {
+        const progress = getWatchProgress(tvShow.id);
+        if (progress) {
+            setSavedProgress(progress);
+        }
+    }, [tvShow.id]);
+
+    // Save progress whenever season or episode changes while watching
+    useEffect(() => {
+        if (!isWatching) return;
+        const seasonObj = tvShow?.seasons?.find((s) => s.name === selectedSeason);
+        if (!seasonObj) return;
+        setWatchProgress(tvShow.id, {
+            seasonName: selectedSeason,
+            seasonNumber: seasonObj.season_number,
+            episode: selectedEpisode,
+        });
+    }, [selectedSeason, selectedEpisode, isWatching, tvShow.id, tvShow.seasons]);
+
+    const handleContinueWatching = () => {
+        if (!savedProgress) return;
+        setSelectedSeason(savedProgress.seasonName);
+        setSelectedEpisode(savedProgress.episode);
+        setIsWatching(true);
+        setSavedProgress(null);
+    };
+
+    const handleClearProgress = () => {
+        clearWatchProgress(tvShow.id);
+        setSavedProgress(null);
+    };
 
     const getVideoUrl = (
         serverId: number,
@@ -138,6 +181,29 @@ const TVByIdCard = ({ tvShow }: Props) => {
                     )}
                 </div>
                 <div className="flex flex-col gap-4">
+                    {savedProgress && !isWatching && (
+                        <div className="flex flex-col gap-2 bg-violet-900/50 border border-violet-600 rounded-xl p-4">
+                            <p className="text-sm font-medium text-violet-200">
+                                ▶ Last watched: Season{" "}
+                                {savedProgress.seasonNumber}, Episode{" "}
+                                {savedProgress.episode}
+                            </p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleContinueWatching}
+                                    className="px-3 py-1.5 bg-violet-500 rounded-md text-sm font-semibold hover:bg-violet-400 duration-200"
+                                >
+                                    Continue
+                                </button>
+                                <button
+                                    onClick={handleClearProgress}
+                                    className="px-3 py-1.5 bg-gray-700 rounded-md text-sm font-semibold hover:bg-gray-600 duration-200"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     <div className="flex justify-center gap-4">
                         <button
                             onClick={() => setIsWatching(true)}
